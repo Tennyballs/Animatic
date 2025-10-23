@@ -24,23 +24,15 @@ const scy = mainCanvas.height / 2;
 
 const r = new Rect(250, 250);
 r.fillColor = Color.random();
+r.outlineColor = Color.random();
 
 r.x = scx;
 r.y = scy;
 
-for (let i = 0; i < 100; i++) {
-    addFunc(i/2, 0.25, Ease.outQuint, function(t){
-        r.rotation = t * 45
-    })
-    addFunc(i/2+0.25, 0.25, Ease.outQuint, function(t){
-        r.rotation = t * 45 + 45
+for (let i = 0; i < 4 * 32; i++) {
+    addFunc(i/2, .5, Ease.outQuint, function(t){
+        r.lineWidth = t * 10
     })
 }
-addFunc(1, 0.25, Ease.bounce, function(t){
-    r.x = t * 100 + scx
-})
-addFunc(1.25, 0.25, Ease.bounce, function(t){
-    r.x = t * -100 + scx
-})
 
 mainLoop();

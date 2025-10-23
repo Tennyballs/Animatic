@@ -261,6 +261,7 @@ class Rect {
     width;
     height;
     rotation;
+    lineWidth;
 
     /**
      * @type {Color}
@@ -283,6 +284,7 @@ class Rect {
         this.fillColor = fillColor;
         this.outlineColor = outlineColor;
         this.rotation = 0;
+        this.lineWidth = 1;
 
         mainCanvas.addChild(this);
     }
@@ -308,7 +310,7 @@ class Rect {
         ctx.translate(-this.width/2, -this.height/2)
         ctx.strokeStyle = this.outlineColor.toString();
         ctx.fillStyle = this.fillColor.toString();
-
+        ctx.lineWidth = this.lineWidth;
         ctx.fillRect(0, 0, this.width, this.height);
         ctx.strokeRect(0, 0, this.width, this.height);
         ctx.restore();
@@ -478,8 +480,7 @@ function mainLoop()
     funcs.filter(v => {
         return v.startTime < performance.now() && v.startTime + v.length > performance.now();
     }).forEach(func => {
-        let v = func.easing((performance.now() - func.startTime) / func.length);
-        func.fn(v);
+        func.fn(func.easing((performance.now() - func.startTime) / func.length));
     });
 }
 
