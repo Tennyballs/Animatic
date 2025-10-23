@@ -1,6 +1,3 @@
-
-
-
 class Music {
 
     /**
@@ -27,12 +24,18 @@ class Music {
         this.src = src;
         this.offset = offset;
         this.bpm = [{time: 0, bpm: 0}]
-        this.element = new Audio(src);
+        this.element = new Audio();
+        this.element.src = src;
     }
 
+    /**
+     * 
+     * @returns {Music}
+     */
     clearBpm()
     {
         this.bpm = [];
+        return this;
     }
 
     /**
@@ -43,10 +46,16 @@ class Music {
     setBpm(bpm)
     {
         this.bpm = [];
-        this.bpm.push({time: -0.0001, bpm})
+        this.bpm.push({time: 0, bpm})
         return this;
     }
 
+    /**
+     * 
+     * @param {number} time time in the song when the bpm changes
+     * @param {number} bpm beats per minute
+     * @returns 
+     */
     addBpm(time, bpm)
     {
         this.bpm.push({time, bpm})
@@ -59,6 +68,14 @@ class Music {
         return this;
     }
 
+    /**
+     * @param {number} time
+     * @returns {Music}
+     */
+    setTime(time){
+        this.element.currentTime = time;
+        return this;
+    }
 
     play()
     {
@@ -90,7 +107,7 @@ class Music {
      */
     set speed(value)
     {
-        this.element.playbackRate = value / 100 + 1;
+        this.element.playbackRate = value / 100;
     }
 
     /**
@@ -127,8 +144,16 @@ class Music {
      */
     getBeat(time = this.element.currentTime)
     {
-        const beat = time * (this.getBpm(time) / 60)
 
-        return beat;
+        if(this.bpm.length == 1)
+        {
+            return time * (this.bpm[0].bpm / 60) + this.offset;
+        }
+        return null;
+    }
+
+    getTime()
+    {
+        return this.element.currentTime;
     }
 }

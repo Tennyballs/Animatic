@@ -1,32 +1,38 @@
-new Music("./")
+"use strict";
+let song = new Music("./152047_ParagonX9___Chaoz_Impact.mp3");
 
+song
+    .clearBpm()
+    .setBpm(150)
+    .play()
+    // .setTime(6.0)
+    .volume = 50
+
+let beats = 60 / 150;
 const scx = mainCanvas.width / 2;
 const scy = mainCanvas.height / 2;
 
-const bg = new Rect(mainCanvas.width, mainCanvas.height);
-bg.center(scx, scy)
-bg.fillColor = new Color(0, 0, 0)
 
+let r = new Rect(mainCanvas.width, mainCanvas.height);
+r.center(scx, scy)
 
-const r = new Rect(250, 250);
-r.fillColor = new Color(0.1, 0, 0.05)
-r.outlineColor = new Color(1, 0, 0.5)
-r.lineWidth = 25
-
-r.x = scx;
-r.y = scy;
-
-addFunc(0, 5, Ease.instant, function(t)
+function flip(t)
 {
-    let speed = 2;
+    return 1 - t
+}
 
-    if(r.x - r.width / 2 - r.lineWidth > mainCanvas.width)
-    {
-        r.x = - r.width / 2 - r.lineWidth
-    }
-
-    r.x+=speed;
+addFunc(0, beats*16, Ease.flip(Ease.outExpo), function(t){
+    r.fillColor.rgba(0, 0, 0, t)
 })
+
+addFunc(beats*15.25, beats*4, Ease.flip(Ease.outExpo), function(t){
+    r.fillColor.rgba(0, 0, 0, t)
+    r.width = t * scx * 2
+    r.height = scy * 3
+    r.rotation = flip(t) * 20
+})
+
+
 
 
 mainLoop();

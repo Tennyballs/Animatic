@@ -1,4 +1,5 @@
 class Canvas {
+    
 
     /**
      * @type {boolean}
@@ -39,6 +40,7 @@ class Canvas {
         this.height = height;
         this.children = [];
         this.autoClear = true;
+        this.music = null;
 
         this.element = document.createElement('canvas');
         if(!this.element)
@@ -101,5 +103,14 @@ class Canvas {
     addChild(child)
     {
         this.children.push(child);
+    }
+
+    /**
+     * 
+     * @param {Music} music
+     */
+    bindTime(music)
+    {
+
     }
 }
