@@ -18,21 +18,29 @@ audio.volume = 10
 audio.play().setBpm(115); // add bpm functionality next update
 
 
-const r = new Rect(250, 250);
-r.fillColor = Color.random();
 
 const scx = mainCanvas.width / 2;
 const scy = mainCanvas.height / 2;
 
-addFunc(0, 1, Ease.outExpo, function(t){
-    r.x = scx * 2 - (t ** 2) * scx
-    r.rotation = t * 45
-})
+const r = new Rect(250, 250);
+r.fillColor = Color.random();
 
-addFunc(1, 1, Ease.outExpo, function(t)
-{
-    r.y = t * scy
-    r.rotation = 45 + t * 45;
+r.x = scx;
+r.y = scy;
+
+for (let i = 0; i < 100; i++) {
+    addFunc(i/2, 0.25, Ease.outQuint, function(t){
+        r.rotation = t * 45
+    })
+    addFunc(i/2+0.25, 0.25, Ease.outQuint, function(t){
+        r.rotation = t * 45 + 45
+    })
+}
+addFunc(1, 0.25, Ease.bounce, function(t){
+    r.x = t * 100 + scx
+})
+addFunc(1.25, 0.25, Ease.bounce, function(t){
+    r.x = t * -100 + scx
 })
 
 mainLoop();

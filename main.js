@@ -465,6 +465,7 @@ const mainCanvas = new Canvas("test-canvas", 640, 480);
  * startTime:number,
  * length:number,
  * easing:function(number):number
+ * once:boolean
  * }
  * ]}
  */
@@ -474,12 +475,10 @@ function mainLoop()
 {
     requestAnimationFrame(mainLoop);
     mainCanvas.render();
-    funcs.forEach(func => {
+    funcs.filter(v => {
+        return v.startTime < performance.now() && v.startTime + v.length > performance.now();
+    }).forEach(func => {
         let v = func.easing((performance.now() - func.startTime) / func.length);
-        if(v<0||v>1)
-        {
-            return;
-        }
         func.fn(v);
     });
 }
@@ -489,14 +488,16 @@ function mainLoop()
  * @param {number} length
  * @param {Ease.linear} ease
  * @param {function(number):number} fn
+ * @param {boolean} once
  */
-function addFunc(startTime, length, easing, fn)
+function addFunc(startTime, length, easing, fn, once = false)
 {
     funcs.push({
         startTime: startTime * 1000,
         length: length * 1000,
         easing,
-        fn
+        fn,
+        once
     })
 }
 
