@@ -1,8 +1,4 @@
-const audio = new Music("./Contagious.ogg");
-audio.volume = 10
-audio.play().setBpm(115); // add bpm functionality next update
-
-
+new Music("./")
 
 const scx = mainCanvas.width / 2;
 const scy = mainCanvas.height / 2;
@@ -13,16 +9,23 @@ bg.fillColor = new Color(0, 0, 0)
 
 
 const r = new Rect(250, 250);
-r.fillColor = new Color(0.1, 0.1, 0.1)
+r.fillColor = new Color(0.1, 0, 0.05)
+r.outlineColor = new Color(1, 0, 0.5)
+r.lineWidth = 25
 
 r.x = scx;
 r.y = scy;
 
-addFunc(0, 1, Ease.outExpo, function(t){
-    r.rotation = t * 90
-    r.fillColor.r = t
-    r.fillColor.g = t
-    r.fillColor.b = t
+addFunc(0, 5, Ease.instant, function(t)
+{
+    let speed = 2;
+
+    if(r.x - r.width / 2 - r.lineWidth > mainCanvas.width)
+    {
+        r.x = - r.width / 2 - r.lineWidth
+    }
+
+    r.x+=speed;
 })
 
 
