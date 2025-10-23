@@ -2,8 +2,6 @@
  * @type {import("../types/color").Color}
  */
 class Color {
-    
-
     constructor(r = 0, g = 0, b = 0, a = 1)
     {
         this.rgba(r,g,b,a);
@@ -22,10 +20,6 @@ class Color {
         return `#${n2hx(this.r) + n2hx(this.g) + n2hx(this.b) + n2hx(this.a)}`
     }
 
-    /**
-     * @param {number} alpha 
-     * @returns {Color}
-     */
     static random(alpha = 1)
     {
         return new Color(Math.random(), Math.random(), Math.random(), alpha)
