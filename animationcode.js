@@ -13,4 +13,15 @@
 
 // const background = new Rect(canvas.width, canvas.height, new Color(0, 0, 0));
 
-// loop()
+const audio = new Music("./Contagious.ogg");
+audio.volume = 50
+audio.play().setBpm(115);
+
+
+console.log(audio.bpm)
+
+setInterval(() => {
+    console.log(audio.getBpm())
+}, 10);
+
+mainLoop()

@@ -76,6 +76,125 @@ function n2hx(value)
 //     bpmChanges.push({time, bpm})
 // }
 
+class Music {
+
+    /**
+     * @private
+     * @type {HTMLAudioElement}
+     */
+    element;
+
+    /**
+     * @type {number}
+     */
+    offset;
+    
+    /**
+     * @param {string} src 
+     * @param {number?} offset the offset for the entire song to be synced for the bpm to be correct (additave).
+     */    
+    constructor(src, offset = 0)
+    {
+        // we default bpm changes to -1
+        // this just means it hasnt been set and we go off;
+        // of time-based events instead
+        // unlike beat-based events
+        this.src = src;
+        this.offset = offset;
+        this.bpm = [{time: -1, bpm: -1}]
+        this.element = new Audio(src);
+    }
+
+    clearBpm()
+    {
+        this.bpm = [];
+    }
+
+    /**
+     * 
+     * @param {number} bpm 
+     * @returns {Music}
+     */
+    setBpm(bpm)
+    {
+        this.bpm = [];
+        this.bpm.push({time: -1, bpm})
+        return this;
+    }
+
+    addBpm(time, bpm)
+    {
+        this.bpm.push({time, bpm})
+    }
+
+    reset()
+    {
+        this.element.currentTime = 0;
+        return this;
+    }
+
+
+    play()
+    {
+        this.element.play();
+        return this;
+    }
+
+    /**
+     * @param {boolean} value 
+     */
+    set playing(value)
+    {
+        if(this.element.paused && value)
+            this.element.play();
+        if(!this.element.paused && !value)
+            this.element.pause();
+    }
+
+    /**
+     * @param {number} value 
+     */
+    set volume(value)
+    {
+        this.element.volume = value / 100; // instead of the user putting in a specific point value for each audio they can just do this;
+    }
+
+    /**
+     * @param {number} value 
+     */
+    set speed(value)
+    {
+        this.element.playbackRate = value / 100 + 1;
+    }
+
+    /**
+     * @param {boolean} value 
+     */
+    set speedEffectsPitch(value)
+    {
+        this.element.preservesPitch = !value
+    }
+
+    getBpm()
+    {
+        if(this.bpm.length == 1)
+            return this.bpm[0].bpm;
+        
+        let time = this.element.currentTime;
+
+        for (let b = 0; b < this.bpm.length; b++) {
+            const beat = this.bpm.reverse()[b];
+            if(time > beat.time){
+                this.bpm.reverse()
+                return beat.bpm;
+            }
+        }
+
+
+        return time;
+    }
+}
+
 class Color {
     
     /** @type {number} */
@@ -105,7 +224,6 @@ class Color {
     }
 
     /**
-     * 
      * @param {number} alpha 
      * @returns {Color}
      */
@@ -284,9 +402,73 @@ class Canvas {
 
 const mainCanvas = new Canvas("test-canvas", 640, 480);
 
-function mainLoop()
+
+/**
+ * @type {[TimedFunction]}
+ */
+const funcs = [];
+
+class TimedFunction
 {
 
+    /**
+     * @type {number}
+     */
+    startTime;
+    endTime;
+
+    /**
+     * @type {Ease}
+     */
+    ease;
+    
+    /**
+     * @type {function(number): void}
+     */
+    callback;
+
+    /**
+     * 
+     * @param {number} startTime
+     * @param {number} length in beats 
+     * @param {Ease} ease 
+     * @param {function(number): void} callback 
+     */
+    constructor(startTime, length, ease, callback)
+    {
+        this.startTime = startTime;
+        this.endTime = startTime + length;
+        this.ease = ease;
+        this.callback = callback;
+        
+        funcs.push(this)
+    }
+
+    /**
+     * @param {number} value
+     * @returns {void}
+     */
+    run(value)
+    {
+    }
+
+    /**
+     * 
+     * @param {HTMLAudioElement} audio
+     */
+    getLinearInterpolation(audio)
+    {
+        
+    }
+}
+
+function mainLoop()
+{
+    requestAnimationFrame(mainLoop);
+    mainCanvas.render();
+    funcs.forEach(func => {
+        func();
+    });
 }
 
 // /**
