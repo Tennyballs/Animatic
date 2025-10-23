@@ -349,7 +349,7 @@ class Ease {
     static outInExpo(t)
     {
         t *= 2;
-        return t < 1 ? outExpo(t * 2) * 0.5 : inExpo(t * 2 - 1) * 0.5 + 0.5;
+        return t < 1 ? Ease.outExpo(t * 2) * 0.5 : Ease.inExpo(t * 2 - 1) * 0.5 + 0.5;
     }
     
 }

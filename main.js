@@ -316,6 +316,18 @@ class Rect {
         ctx.restore();
     }
 
+
+    /**
+     * 
+     * @param {number} x 
+     * @param {number} y 
+     */
+    center(x, y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
     /**
      * @override
      * @returns {string}
@@ -472,6 +484,15 @@ const mainCanvas = new Canvas("test-canvas", 640, 480);
  * ]}
  */
 const funcs = [];
+/**
+ * @type {[
+ * {
+ * fn:function(number):void,
+ * time:number,
+ * }
+ * ]}
+ */
+const setFuncs = [];
 
 function mainLoop()
 {
@@ -482,6 +503,12 @@ function mainLoop()
     }).forEach(func => {
         func.fn(func.easing((performance.now() - func.startTime) / func.length));
     });
+    // setFuncs.filter(v => {
+    //     return v.time < performance.now();
+    // }).forEach(func => {
+    //     func.fn(1);
+    //     setFuncs.splice(setFuncs.findIndex(func), 1);
+    // })
 }
 
 /**
@@ -509,4 +536,19 @@ function addFunc(startTime, length, easing, fn, once = false)
 function delFunc(fn)
 {
     funcs.splice(funcs.indexOf(fn), 1);
+}
+
+function clearFuncs()
+{
+    funcs.length = 0;
+}
+
+
+/**
+ * @param {number} startTime
+ * @param {function(number):number} fn
+ */
+function addSetFunc(startTime, fn)
+{
+    setFuncs.push({time: startTime * 1000, fn})
 }
