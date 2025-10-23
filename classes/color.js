@@ -1,24 +1,12 @@
+/**
+ * @type {import("../types/color").Color}
+ */
 class Color {
     
-    /** @type {number} */
-    r;
-    g;
-    b;
-    a;
 
-    /**
-     * 
-     * @param {number} r between 0 - 1
-     * @param {number} g between 0 - 1
-     * @param {number} b between 0 - 1
-     * @param {number} a between 0 - 1
-     */
     constructor(r = 0, g = 0, b = 0, a = 1)
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+        this.rgba(r,g,b,a);
     }
 
     rgba(r = this.r, g = this.g, b = this.b, a = this.a)
