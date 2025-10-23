@@ -320,7 +320,6 @@ class Rect {
     }
 }
 
-console.log(Ease.bell(0.5))
 
 class Canvas {
 
@@ -456,7 +455,14 @@ const mainCanvas = new Canvas("test-canvas", 640, 480);
 
 
 /**
- * @type {[function(number):void]}
+ * @type {[
+ * {
+ * fn:function(number):void,
+ * startTime:number,
+ * length:number,
+ * easing:function(number):number
+ * }
+ * ]}
  */
 const funcs = [];
 
@@ -465,17 +471,29 @@ function mainLoop()
     requestAnimationFrame(mainLoop);
     mainCanvas.render();
     funcs.forEach(func => {
-        func(performance.now()/1000);
+        let v = func.easing((performance.now() - func.startTime) / func.length);
+        if(v<0||v>1)
+        {
+            return;
+        }
+        func.fn(v);
     });
 }
 
 /**
- * 
- * @param {function(number):void} fn 
+ * @param {number} startTime
+ * @param {number} length
+ * @param {Ease.linear} ease
+ * @param {function(number):number} fn
  */
-function addFunc(fn)
+function addFunc(startTime, length, easing, fn)
 {
-    funcs.push(fn);
+    funcs.push({
+        startTime: startTime * 1000,
+        length: length * 1000,
+        easing,
+        fn
+    })
 }
 
 /**

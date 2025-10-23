@@ -18,15 +18,15 @@ audio.volume = 10
 audio.play().setBpm(115); // add bpm functionality next update
 
 
-for (let i = 0; i < 100; i++) {
-    const r = new Rect(10, 10);
-    r.x = i * 1
-    r.fillColor = Color.random();
-}
+const r = new Rect(10, 10);
+r.fillColor = Color.random();
 
-addFunc(function(time)
-{
-    mainCanvas.hueShift(time/100)
+const scx = mainCanvas.width / 2;
+const scy = mainCanvas.height / 2;
+
+addFunc(0, 1, Ease.flip(Ease.inExpo), function(t){
+    r.x = t * scx
+
 })
 
 mainLoop();
