@@ -236,6 +236,14 @@ class Color {
         this.a = a;
     }
 
+    rgba(r = this.r, g = this.g, b = this.b, a = this.a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
     toString()
     {
         return `#${n2hx(this.r) + n2hx(this.g) + n2hx(this.b) + n2hx(this.a)}`
