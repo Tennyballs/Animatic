@@ -1,6 +1,6 @@
 const {abs, sin, pow} = Math;
 /**
- * @tutorial Ease.{Enum.Ease}
+ * @tutorial Ease.ease_type
  * @author CrittericallyOnline
  * @description Filled to the brim with functions!
  */
