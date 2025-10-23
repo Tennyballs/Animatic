@@ -1,9 +1,66 @@
 "use strict";
-// const canvas = document.createElement('canvas');
-// const ctx = canvas.getContext('2d');
 
-// document.body.appendChild(canvas);
+function rgb2hsv (r, g, b) {
+    let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
+    rabs = r / 255;
+    gabs = g / 255;
+    babs = b / 255;
+    v = Math.max(rabs, gabs, babs),
+    diff = v - Math.min(rabs, gabs, babs);
+    diffc = c => (v - c) / 6 / diff + 1 / 2;
+    percentRoundFn = num => Math.round(num * 100) / 100;
+    if (diff == 0) {
+        h = s = 0;
+    } else {
+        s = diff / v;
+        rr = diffc(rabs);
+        gg = diffc(gabs);
+        bb = diffc(babs);
 
+        if (rabs === v) {
+            h = bb - gg;
+        } else if (gabs === v) {
+            h = (1 / 3) + rr - bb;
+        } else if (babs === v) {
+            h = (2 / 3) + gg - rr;
+        }
+        if (h < 0) {
+            h += 1;
+        }else if (h > 1) {
+            h -= 1;
+        }
+    }
+    return {
+        h: Math.round(h * 360),
+        s: percentRoundFn(s * 100),
+        v: percentRoundFn(v * 100)
+    };
+}
+
+function HSVtoRGB(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+}
 
 /**
  * 
@@ -23,58 +80,6 @@ function n2hx(value)
 {
     return clamp(Math.floor(value * 255), 0, 255).toString(16).padStart(2, '0');
 }
-
-// const objectsToRenderToCtx = [];
-// const bpmChanges = [];
-// const loopFns = [];
-// let autoClear = true;
-// let audio = null;
-
-
-// function loop(passedSong = null)
-// {
-//     if(passedSong)
-//     {
-//         audio = passedSong;
-//     }
-
-//     requestAnimationFrame(loop);
-
-
-//     if(autoClear)
-//     {
-//         ctx.clearRect(0, 0, canvas.width, canvas.height);
-//     }
-//     objectsToRenderToCtx.forEach(obj => {
-//         obj.draw(ctx);
-//     });
-//     loopFns.forEach(func => {
-//         func();
-//     });
-    
-// }
-
-// function removeFromLoop(func)
-// {
-//     loopFns.splice(loopFns.indexOf(func), 1)
-// }
-
-// function addToLoop(func)
-// {
-//     loopFns.push(func);
-// }
-
-// class Task {
-//     static wait(length = 0.001)
-//     {
-//         return new Promise(resolve => setTimeout(resolve, length));
-//     }
-// }
-
-// function setBpm(time, bpm)
-// {
-//     bpmChanges.push({time, bpm})
-// }
 
 class Music {
 
@@ -101,7 +106,7 @@ class Music {
         // unlike beat-based events
         this.src = src;
         this.offset = offset;
-        this.bpm = [{time: -1, bpm: -1}]
+        this.bpm = [{time: 0, bpm: 0}]
         this.element = new Audio(src);
     }
 
@@ -118,13 +123,14 @@ class Music {
     setBpm(bpm)
     {
         this.bpm = [];
-        this.bpm.push({time: -1, bpm})
+        this.bpm.push({time: -0.0001, bpm})
         return this;
     }
 
     addBpm(time, bpm)
     {
         this.bpm.push({time, bpm})
+        return this;
     }
 
     reset()
@@ -175,23 +181,35 @@ class Music {
         this.element.preservesPitch = !value
     }
 
-    getBpm()
+    /**
+     * @param {number} [time=this.element.currentTime] 
+     * @returns {number}
+     */
+    getBpm(time = this.element.currentTime)
     {
         if(this.bpm.length == 1)
             return this.bpm[0].bpm;
-        
-        let time = this.element.currentTime;
 
         for (let b = 0; b < this.bpm.length; b++) {
-            const beat = this.bpm.reverse()[b];
+            const beat = this.bpm.toReversed()[b];
             if(time > beat.time){
-                this.bpm.reverse()
                 return beat.bpm;
             }
         }
 
-
         return time;
+    }
+
+
+    /**
+     * @param {number}
+     * @returns {number}
+     */
+    getBeat(time = this.element.currentTime)
+    {
+        const beat = time * (this.getBpm(time) / 60)
+
+        return beat;
     }
 }
 
@@ -265,6 +283,8 @@ class Rect {
         this.fillColor = fillColor;
         this.outlineColor = outlineColor;
         this.rotation = 0;
+
+        mainCanvas.addChild(this);
     }
 
     /**
@@ -299,6 +319,8 @@ class Rect {
         return `Rect(x=${this.x}, y=${this.y}, width=${this.width}, height=${this.height}, fillColor="${this.fillColor.toString()}, outlineColor="${this.outlineColor.toString()}", rotation=${this.rotation})`
     }
 }
+
+console.log(Ease.bell(0.5))
 
 class Canvas {
 
@@ -340,7 +362,7 @@ class Canvas {
         this.width = width;
         this.height = height;
         this.children = [];
-        this.autoClear = false;
+        this.autoClear = true;
 
         this.element = document.createElement('canvas');
         if(!this.element)
@@ -348,7 +370,9 @@ class Canvas {
             throw new Error("Could not create the Canvas element!!\nThis browser or window does not support the HTMLCanvasElement Properties/Attributes needed to use this web-application.")
         }
 
-        this.ctx = this.element.getContext('2d');
+        this.ctx = this.element.getContext('2d', {
+            willReadFrequently: true
+        });
 
         if(!this.ctx)
         {
@@ -391,12 +415,40 @@ class Canvas {
     {
         if(this.autoClear)
         {
-
+            this.ctx.clearRect(0, 0, this.element.width, this.element.height);
         }
-        const ctx = this.element.getContext('2d');
         this.children.forEach(child => {
-            child.draw(ctx);
-        });
+            child.draw(this.ctx);
+        })
+    }
+
+    addChild(child)
+    {
+        this.children.push(child);
+    }
+
+    hueShift(degrees)
+    {
+        const imageData = this.ctx.createImageData(this.width, this.height)
+        const pixels = this.ctx.getImageData(0, 0, this.width, this.height).data;
+        for(let i = 0; i < pixels.length; i += 4)
+        {
+            let r = pixels[i+0];
+            let g = pixels[i+1];
+            let b = pixels[i+2];
+
+            let hsv = rgb2hsv(r, g, b);
+
+            let rgb = HSVtoRGB(hsv.h* degrees, hsv.s, hsv.v);
+
+            imageData.data[i+0] = rgb.r
+            imageData.data[i+1] = rgb.g
+            imageData.data[i+2] = rgb.b
+            imageData.data[i+3] = 255
+        }
+
+
+        this.ctx.putImageData(imageData, 0, 0)
     }
 }
 
@@ -404,79 +456,33 @@ const mainCanvas = new Canvas("test-canvas", 640, 480);
 
 
 /**
- * @type {[TimedFunction]}
+ * @type {[function(number):void]}
  */
 const funcs = [];
-
-class TimedFunction
-{
-
-    /**
-     * @type {number}
-     */
-    startTime;
-    endTime;
-
-    /**
-     * @type {Ease}
-     */
-    ease;
-    
-    /**
-     * @type {function(number): void}
-     */
-    callback;
-
-    /**
-     * 
-     * @param {number} startTime
-     * @param {number} length in beats 
-     * @param {Ease} ease 
-     * @param {function(number): void} callback 
-     */
-    constructor(startTime, length, ease, callback)
-    {
-        this.startTime = startTime;
-        this.endTime = startTime + length;
-        this.ease = ease;
-        this.callback = callback;
-        
-        funcs.push(this)
-    }
-
-    /**
-     * @param {number} value
-     * @returns {void}
-     */
-    run(value)
-    {
-    }
-
-    /**
-     * 
-     * @param {HTMLAudioElement} audio
-     */
-    getLinearInterpolation(audio)
-    {
-        
-    }
-}
 
 function mainLoop()
 {
     requestAnimationFrame(mainLoop);
     mainCanvas.render();
     funcs.forEach(func => {
-        func();
+        func(performance.now()/1000);
     });
 }
 
-// /**
-//  * @param {number} [time=-1] the time
-//  * @param {number} [bpm=120] the beat
-//  * @returns {void}
-//  */
-// function addBPM(time = -1, bpm = 120)
-// {
-//     console.log(time, bpm)
-// }
+/**
+ * 
+ * @param {function(number):void} fn 
+ */
+function addFunc(fn)
+{
+    funcs.push(fn);
+}
+
+/**
+ * 
+ * @param {function(number):void} fn 
+ */
+function delFunc(fn)
+{
+    funcs.splice(funcs.indexOf(fn), 1);
+}

@@ -14,14 +14,19 @@
 // const background = new Rect(canvas.width, canvas.height, new Color(0, 0, 0));
 
 const audio = new Music("./Contagious.ogg");
-audio.volume = 50
-audio.play().setBpm(115);
+audio.volume = 10
+audio.play().setBpm(115); // add bpm functionality next update
 
 
-console.log(audio.bpm)
+for (let i = 0; i < 100; i++) {
+    const r = new Rect(10, 10);
+    r.x = i * 1
+    r.fillColor = Color.random();
+}
 
-setInterval(() => {
-    console.log(audio.getBpm())
-}, 10);
+addFunc(function(time)
+{
+    mainCanvas.hueShift(time/100)
+})
 
-mainLoop()
+mainLoop();
