@@ -1,40 +1,22 @@
-class Canvas {
-    
+/**
+ * @typedef {import('../types/canvas')}
+ */
 
-    /**
-     * @type {boolean}
-     */
+/**
+ * @type {Canvas}
+ */
+class Canvas {
+    music;
+
     autoClear;
 
-    /**
-     * @private
-     * @type {HTMLCanvasElement}
-     */
     element;
 
-    /**
-     * @private
-     * @type {CanvasRenderingContext2D}
-     */
     ctx;
 
-    /**
-     * @type {number}
-     */
     width;
     height;
-
-    /**
-     * @private
-     * @type {[Rect]} Objects of any kind supported by the API ive created.
-     */
     children;
-
-    /**
-     * @param {string} id ex: "canvas"
-     * @param {number} width width in pixels 
-     * @param {number} height height in pixels 
-     */
     constructor(id, width = 1, height = 1) {
         this.width = width;
         this.height = height;
@@ -100,17 +82,22 @@ class Canvas {
         })
     }
 
+    /**
+     * 
+     * @param {Rect} child 
+     * @returns {void}
+     */
     addChild(child)
     {
         this.children.push(child);
     }
 
     /**
-     * 
      * @param {Music} music
+     * @returns {Canvas}
      */
-    bindTime(music)
+    bindMusic(music)
     {
-
+        this.music = music
     }
 }

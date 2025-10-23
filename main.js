@@ -83,8 +83,10 @@ function n2hx(value)
 
 
 
+/**
+ * @type {import("./types/canvas").Canvas}
+ */
 const mainCanvas = new Canvas("canvas", 640, 480);
-
 
 /**
  * @type {[

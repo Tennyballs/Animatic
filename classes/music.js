@@ -1,4 +1,10 @@
+
 class Music {
+
+    /**
+     * @type {string}
+     */
+    src
 
     /**
      * @private
@@ -62,6 +68,10 @@ class Music {
         return this;
     }
 
+    /**
+     * 
+     * @returns {Music}
+     */
     reset()
     {
         this.element.currentTime = 0;
@@ -77,6 +87,10 @@ class Music {
         return this;
     }
 
+    /**
+     * 
+     * @returns {Music}
+     */
     play()
     {
         this.element.play();
@@ -135,6 +149,16 @@ class Music {
         }
 
         return time;
+    }
+
+    /**
+     * @param {number} offset
+     * @returns {Music}
+     */
+    setOffset(offset)
+    {
+        this.offset = offset;
+        return this;
     }
 
 
