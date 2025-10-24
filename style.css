@@ -11,7 +11,3 @@ body {
 canvas {
     image-rendering: pixelated;
 }
-
-#test-canvas {
-    background-color: black;
-}
